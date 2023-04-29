@@ -7,18 +7,41 @@ import {
 } from "react-icons/fa";
 import "../Styles/style.css";
 import QzZone from "./qzZone";
+import { useContext } from "react";
+import { AuthContext } from "../AuthProvider/AuthProvider";
 const RightNav = () => {
+  const { user, logInWithGoogle, logInWithGithub } = useContext(AuthContext);
+  const handleLogInGoogle = () => {
+    logInWithGoogle();
+  };
+  const handleLogInGithub = () => {
+    logInWithGithub();
+  };
   return (
     <div>
-      <p className="text-2xl font-bold mb-5">Login with</p>
-      <button className="btn w-full normal-case border border-[#5c6ac4] text-[#5c6ac4] mb-3">
-        <FaGoogle className="mr-2"></FaGoogle>
-        Login with Google
-      </button>
-      <button className="btn w-full normal-case border border-black">
-        <FaGithub className="mr-2"></FaGithub>
-        Login with Github
-      </button>
+      {user ? (
+        <></>
+      ) : (
+        <>
+          <div>
+            <p className="text-2xl font-bold mb-5">Login with</p>
+            <button
+              onClick={handleLogInGoogle}
+              className="btn w-full normal-case border border-[#5c6ac4] text-[#5c6ac4] mb-3"
+            >
+              <FaGoogle className="mr-2"></FaGoogle>
+              Login with Google
+            </button>
+            <button
+              onClick={handleLogInGithub}
+              className="btn w-full normal-case border border-black"
+            >
+              <FaGithub className="mr-2"></FaGithub>
+              Login with Github
+            </button>
+          </div>
+        </>
+      )}
       <div>
         <p className="text-2xl text-[#403F3F] my-10 font-semibold mb-5">
           Find Us On

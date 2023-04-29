@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
 import Navbar from "./Navbar";
-
+import { useContext, useState } from "react";
+import { AuthContext } from "../AuthProvider/AuthProvider";
+import Swal from "sweetalert2";
 /*
   This example requires some changes to your config:
   
@@ -16,6 +18,54 @@ import Navbar from "./Navbar";
   ```
 */
 export default function Register() {
+  const [accepted, setAccepted] = useState(false);
+  const { createUser, updateProf } = useContext(AuthContext);
+  const handleCreateUser = (e) => {
+    e.preventDefault();
+    const name = e.target.name.value;
+    const photo = e.target.photo.value;
+    const email = e.target.email.value;
+    const password = e.target.password.value;
+    e.target.reset();
+    if (!/(?=.*[A-Z])/.test(password)) {
+      return Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Please add at least one uppercase!",
+      });
+    } else if (!/(?=.*[0-9])/.test(password)) {
+      return Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Please add at least one numbers!",
+      });
+    } else if (password.length < 8) {
+      return Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Please add at least 8 characters in your password!",
+      });
+    } else if (!/(?=.*[!@#$&*])/.test(password)) {
+      return Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Please add a special character!",
+      });
+    }
+    createUser(email, password)
+      .then((r) => {
+        // r.user.displayName = name;
+        // r.user.photoURL = photo;
+        updateProf(name, photo);
+        console.log(r.user);
+      })
+      .catch((e) => console.log(e));
+  };
+
+  const handleTerms = (e) => {
+    setAccepted(e.target.checked);
+    console.log(e.target.checked);
+  };
   return (
     <>
       <Navbar></Navbar>
@@ -30,13 +80,18 @@ export default function Register() {
       <div className="flex  flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
           <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-[#403F3F]">
-          Register your account
+            Register your account
           </h2>
         </div>
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form className="space-y-6" action="#" method="POST">
-          <div>
+          <form
+            onSubmit={handleCreateUser}
+            className="space-y-6"
+            action="#"
+            method="POST"
+          >
+            <div>
               <label
                 htmlFor="name"
                 className="block text-sm font-medium leading-6 text-gray-900"
@@ -112,26 +167,35 @@ export default function Register() {
               </div>
             </div>
             <div className="font-thin text-xs flex gap-3">
-                <input type="checkbox" name="checkbox" id="" /> Accept The Term and Conditions
+              <input
+                onClick={handleTerms}
+                type="checkbox"
+                name="accept"
+                id=""
+              />{" "}
+              Accept The Term and Conditions
             </div>
 
             <div>
               <button
                 type="submit"
-                className="flex w-full justify-center rounded-md bg-[#403F3F] px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                className={`flex w-full justify-center rounded-md bg-[#403F3F] px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm ${
+                  accepted ? "hover:bg-indigo-500" : ""
+                } focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600`}
+                disabled={!accepted}
               >
-                Sign in
+                Sign up
               </button>
             </div>
           </form>
 
           <p className="mt-10 text-center text-sm text-gray-500">
-            Not a member?{" "}
+            Already have an account?{" "}
             <Link
-              to="/register"
+              to="/login"
               className="font-semibold leading-6 text-red-500 hover:text-indigo-500"
             >
-              Register
+              Login
             </Link>
           </p>
         </div>

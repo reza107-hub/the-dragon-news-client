@@ -1,32 +1,46 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import Navbar from "./Navbar";
+import { useContext } from "react";
+import { AuthContext } from "../AuthProvider/AuthProvider";
+import { FaGithub, FaGoogle } from "react-icons/fa";
 
-/*
-  This example requires some changes to your config:
-  
-  ```
-  // tailwind.config.js
-  module.exports = {
-    // ...
-    plugins: [
-      // ...
-      require('@tailwindcss/forms'),
-    ],
-  }
-  ```
-*/
 export default function Login() {
+  const { signIn, logInWithGoogle, logInWithGithub } = useContext(AuthContext);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from?.pathname || "/category/0";
+  const handleLogIn = (e) => {
+    e.preventDefault();
+    const email = e.target.email.value;
+    const password = e.target.password.value;
+    e.target.reset();
+    signIn(email, password)
+      .then((r) => {
+        console.log(r.user);
+        navigate(from, { replace: true });
+      })
+      .catch((e) => console.log(e));
+  };
+  const handleLogInGoogle = () => {
+    logInWithGoogle()
+      .then((r) => {
+        console.log(r.user);
+        navigate(from, { replace: true });
+      })
+      .catch((e) => console.log(e));
+  };
+  const handleLogInGithub = () => {
+    logInWithGithub()
+      .then((r) => {
+        console.log(r.user);
+        navigate(from, { replace: true });
+      })
+      .catch((e) => console.log(e));
+  };
   return (
     <>
       <Navbar></Navbar>
-      {/*
-          This example requires updating your template:
-  
-          ```
-          <html class="h-full bg-white">
-          <body class="h-full">
-          ```
-        */}
+
       <div className="flex  flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
           <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-[#403F3F]">
@@ -35,7 +49,12 @@ export default function Login() {
         </div>
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form className="space-y-6" action="#" method="POST">
+          <form
+            onSubmit={handleLogIn}
+            className="space-y-6"
+            action="#"
+            method="POST"
+          >
             <div>
               <label
                 htmlFor="email"
@@ -63,7 +82,6 @@ export default function Login() {
                 >
                   Password
                 </label>
-                
               </div>
               <div className="mt-2">
                 <input
@@ -96,6 +114,24 @@ export default function Login() {
               Register
             </Link>
           </p>
+          <div className="divider">OR</div>
+          <div className="flex flex-col items-center">
+            <p className="text-2xl font-bold mb-5">Login with</p>
+            <button
+              onClick={handleLogInGoogle}
+              className="btn flex normal-case border border-[#5c6ac4] text-[#5c6ac4] mb-3"
+            >
+              <FaGoogle className="mr-2"></FaGoogle>
+              Login with Google
+            </button>
+            <button
+              onClick={handleLogInGithub}
+              className="btn  flex normal-case border border-black"
+            >
+              <FaGithub className="mr-2"></FaGithub>
+              Login with Github
+            </button>
+          </div>
         </div>
       </div>
     </>

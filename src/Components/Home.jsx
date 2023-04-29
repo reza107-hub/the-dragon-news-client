@@ -3,6 +3,7 @@ import LeftNav from "./LeftNav";
 import RightNav from "./RightNav";
 import Header from "./Header";
 import Navbar from "./Navbar";
+import AuthProvider from "../AuthProvider/AuthProvider";
 
 const Home = () => {
   return (
@@ -12,7 +13,7 @@ const Home = () => {
       <div className="grid lg:grid-cols-[1fr,3fr,1fr]">
         <LeftNav></LeftNav>
         <Outlet></Outlet>
-        <RightNav></RightNav>
+        <AuthProvider><RightNav></RightNav></AuthProvider>
       </div>
     </div>
   );
